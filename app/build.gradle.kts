@@ -26,6 +26,9 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.quickie.bundled)
     implementation(libs.androidx.activity.ktx)
+
+    // ssfrida: web access to SQLite + SharedPreferences via adb forward tcp:8080 tcp:8080
+    implementation("com.amitshekhar.android:debug-db:1.0.6")
 }
 
 tasks.getByName("clean", type = Delete::class) {

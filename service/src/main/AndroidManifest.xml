@@ -51,7 +51,6 @@
             android:authorities="${applicationId}.files"
             android:exported="true"
             android:grantUriPermissions="true"
-            android:permission="android.permission.MANAGE_DOCUMENTS"
             android:process=":background">
             <intent-filter>
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
