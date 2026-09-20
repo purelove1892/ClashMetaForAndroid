@@ -28,7 +28,7 @@ dependencies {
     implementation(libs.androidx.activity.ktx)
 
     // ssfrida: web access to SQLite + SharedPreferences via adb forward tcp:8080 tcp:8080
-    implementation("com.amitshekhar.android:debug-db:1.0.6")
+    implementation("com.github.amitshekhariitbhu.Android-Debug-Database:debug-db:v1.0.7")
 }
 
 tasks.getByName("clean", type = Delete::class) {

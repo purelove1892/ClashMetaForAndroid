@@ -25,6 +25,7 @@ subprojects {
         mavenCentral()
         google()
         maven("https://raw.githubusercontent.com/MetaCubeX/maven-backup/main/releases")
+        maven("https://jitpack.io")
     }
 
     val isApp = name == "app"
