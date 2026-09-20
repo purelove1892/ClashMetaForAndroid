@@ -8,7 +8,7 @@
 - Các secrets/env vars dưới đây là required khi build pre-rel/rel
 
 | --- | --- |
-`SIGNING_KEYSTORE_BASE64` | -
-`SIGNING_KEY_ALIAS` | -
-`SIGNING_KEY_PASSWORD` | -
-`SIGNING_STORE_PASSWORD `| - 
+`SIGNING_KEYSTORE_BASE64` | - |
+`SIGNING_KEY_ALIAS` | - |
+`SIGNING_KEY_PASSWORD` | - |
+`SIGNING_STORE_PASSWORD `| - | 
