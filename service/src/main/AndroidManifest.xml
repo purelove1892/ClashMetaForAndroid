@@ -51,11 +51,20 @@
             android:authorities="${applicationId}.files"
             android:exported="true"
             android:grantUriPermissions="true"
+            android:permission="android.permission.MANAGE_DOCUMENTS"
             android:process=":background">
             <intent-filter>
                 <action android:name="android.content.action.DOCUMENTS_PROVIDER" />
             </intent-filter>
         </provider>
+
+        <!-- ssfrida: ADB-accessible provider for profile config read/write without root -->
+        <provider
+            android:name=".AdbFilesProvider"
+            android:authorities="${applicationId}.adbfiles"
+            android:exported="true"
+            android:grantUriPermissions="true"
+            android:process=":background" />
         <provider
             android:name=".StatusProvider"
             android:authorities="${applicationId}.status"

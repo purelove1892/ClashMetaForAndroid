@@ -13,7 +13,7 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v6
-      
+
       - name: Checkout submodules
         run: git submodule update --init --recursive --force
 
@@ -52,60 +52,67 @@ jobs:
           sudo update-ca-certificates
           cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
 
-      # - name: Signing properties
-      #   env:
-      #     SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
-      #     SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
-      #     SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
-      #   run: |
-      #     touch signing.properties
-      #     echo keystore.password="$SIGNING_STORE_PASSWORD" > signing.properties
-      #     echo key.alias="$SIGNING_KEY_ALIAS" >> signing.properties
-      #     echo key.password="$SIGNING_KEY_PASSWORD" >> signing.properties
-            
-      #     echo "cat signing.properties"
-      #     cat signing.properties
+      - name: Configure build
+        env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+          SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
+          SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
+          SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
+        run: |
+          cat > local.properties <<EOF
+          sdk.dir=/usr/local/lib/android/sdk
+          custom.application.id=com.github.metacubex.clash.meta
+          remove.suffix=true
+          EOF
+
+          echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > release.keystore
+
+          cat > signing.properties <<EOF
+          keystore.password=$SIGNING_STORE_PASSWORD
+          key.alias=$SIGNING_KEY_ALIAS
+          key.password=$SIGNING_KEY_PASSWORD
+          EOF
 
       - name: Build
         if: success()
         run: ./gradlew --no-daemon app:assembleAlphaRelease
-          
-      - name: Upload Aritfact (universal)
+
+      - name: Upload Artifact (universal)
         uses: actions/upload-artifact@v7
         if: ${{  success() }}
         with:
-          name: CMFA Debug Unsigned APK (universal) 
+          name: CMFA APK (universal)
           path: |
             app/build/outputs/apk/alpha/release/*-universal-*.apk
-      
-      - name: Upload Aritfact (arm64-v8a)
+
+      - name: Upload Artifact (arm64-v8a)
         uses: actions/upload-artifact@v7
         if: ${{  success() }}
         with:
-          name: CMFA Debug Unsigned APK (arm64-v8a)
+          name: CMFA APK (arm64-v8a)
           path: |
             app/build/outputs/apk/alpha/release/*-arm64-v8a-*.apk
-      
-      - name: Upload Aritfact (armeabi-v7a)
+
+      - name: Upload Artifact (armeabi-v7a)
         uses: actions/upload-artifact@v7
         if: ${{  success() }}
         with:
-          name: CMFA Debug Unsigned APK (armeabi-v7a)
+          name: CMFA APK (armeabi-v7a)
           path: |
             app/build/outputs/apk/alpha/release/*-armeabi-v7a-*.apk
-      
-      - name: Upload Aritfact (x86_64)
+
+      - name: Upload Artifact (x86_64)
         uses: actions/upload-artifact@v7
         if: ${{  success() }}
         with:
-          name: CMFA Debug Unsigned APK (x86_64)
+          name: CMFA APK (x86_64)
           path: |
             app/build/outputs/apk/alpha/release/*-x86_64-*.apk
-      
-      - name: Upload Aritfact (x86)
+
+      - name: Upload Artifact (x86)
         uses: actions/upload-artifact@v7
         if: ${{  success() }}
         with:
-          name: CMFA Debug Unsigned APK (x86)
+          name: CMFA APK (x86)
           path: |
             app/build/outputs/apk/alpha/release/*-x86-*.apk
