@@ -89,19 +89,32 @@ jobs:
           sudo update-ca-certificates
           cp -f /etc/ssl/certs/ca-certificates.crt core/src/foss/golang/clash/component/ca/ca-certificates.crt
 
-      - name: Signing properties
+      - name: Configure build
         env:
+          SIGNING_KEYSTORE_BASE64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
           SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD }}
           SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS }}
           SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD }}
         run: |
-          touch signing.properties
-          echo keystore.password="$SIGNING_STORE_PASSWORD" > signing.properties
-          echo key.alias="$SIGNING_KEY_ALIAS" >> signing.properties
-          echo key.password="$SIGNING_KEY_PASSWORD" >> signing.properties
-            
-          echo "cat signing.properties"
-          cat signing.properties
+          cat > local.properties <<EOF
+          sdk.dir=/usr/local/lib/android/sdk
+          custom.application.id=com.github.metacubex.clash.meta
+          remove.suffix=true
+          EOF
+
+          rm -f release.keystore
+          if [ -n "$SIGNING_KEYSTORE_BASE64" ]; then
+            echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > release.keystore
+            cat > signing.properties <<EOF
+          keystore.password=$SIGNING_STORE_PASSWORD
+          key.alias=$SIGNING_KEY_ALIAS
+          key.password=$SIGNING_KEY_PASSWORD
+          EOF
+            echo "Signing configured from secrets"
+          else
+            echo "WARNING: SIGNING_KEYSTORE_BASE64 not set, using debug signing"
+            rm -f signing.properties
+          fi
 
       - name: Release Build
         if: success()

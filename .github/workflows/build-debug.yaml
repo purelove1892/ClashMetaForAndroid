@@ -65,13 +65,19 @@ jobs:
           remove.suffix=true
           EOF
 
-          echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > release.keystore
-
-          cat > signing.properties <<EOF
+          rm -f release.keystore
+          if [ -n "$SIGNING_KEYSTORE_BASE64" ]; then
+            echo "$SIGNING_KEYSTORE_BASE64" | base64 -d > release.keystore
+            cat > signing.properties <<EOF
           keystore.password=$SIGNING_STORE_PASSWORD
           key.alias=$SIGNING_KEY_ALIAS
           key.password=$SIGNING_KEY_PASSWORD
           EOF
+            echo "Signing configured from secrets"
+          else
+            echo "WARNING: SIGNING_KEYSTORE_BASE64 not set, using debug signing"
+            rm -f signing.properties
+          fi
 
       - name: Build
         if: success()
